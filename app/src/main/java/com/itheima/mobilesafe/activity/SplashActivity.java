@@ -13,10 +13,15 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.TranslateAnimation;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itheima.mobilesafe.R;
+import com.itheima.mobilesafe.utils.ConstantValue;
+import com.itheima.mobilesafe.utils.SPUtil;
 import com.itheima.mobilesafe.utils.StreamUtil;
 import com.itheima.mobilesafe.utils.ToastUtil;
 
@@ -43,12 +48,13 @@ public class SplashActivity extends Activity {
     private static final int ENTER_HOME = 101; //进入应用程序主界面状态码
     private static final int EXCEPTION_CODE = 102; //异常状态码
 
-    private static final long SPLASH_DURATION = 100; //毫秒
+    private static final long SPLASH_DURATION = 500; //毫秒
     private String mVersionDes;
     private String mDownloadUrl;
     private ProgressDialog progressDialog;
 
     private static final int INSTALL_REQUEST_CODE = 1;
+    private RelativeLayout rlRoot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,17 @@ public class SplashActivity extends Activity {
         initUI();
         //初始化数据
         initData();
+        //初始化动画
+        initAnimation();
+    }
+
+    /**
+     * 添加淡入的动画效果
+     */
+    private void initAnimation() {
+        AlphaAnimation animation = new AlphaAnimation(0, 1);
+        animation.setDuration(3000);
+        rlRoot.startAnimation(animation);
     }
 
     /**
@@ -73,8 +90,15 @@ public class SplashActivity extends Activity {
         //检测是否有更新, 如果有,提示用户下载(本地版本号 和服务器版本号对比)
         //成员变量(m member)
         mLocalVersionCode = getVersionCode();
-        //获取服务器版本号(客户端发请求, 服务端给响应)
-        checkVersion();
+
+        //是否自动更新
+        boolean update = SPUtil.getBoolean(this, ConstantValue.UPDATE_CONFIG, false);
+        if (update) {
+            //获取服务器版本号(客户端发请求, 服务端给响应)
+            checkVersion();
+        } else {
+            mHandler.sendEmptyMessageDelayed(ENTER_HOME, SPLASH_DURATION);
+        }
     }
 
     /**
@@ -178,6 +202,7 @@ public class SplashActivity extends Activity {
      */
     private void initUI() {
         versionTV = findViewById(R.id.tv_version_name);
+        rlRoot = findViewById(R.id.rl_root);
     }
 
     /**

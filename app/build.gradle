@@ -6,7 +6,7 @@ android {
         applicationId "com.itheima.mobilesafe"
         minSdkVersion 22 /*最小版本SDK*/
         targetSdkVersion 28 /*目标版本SDK*/
-        versionCode 1 /*本地应用版本号,如果服务器是2,有必要提示用户更新*/
+        versionCode 2 /*本地应用版本号,如果服务器是2,有必要提示用户更新*/
         /* 1.0.1
         * 最后一位:代表修复原有版本的bug
         * 倒数第二位:更新部分功能

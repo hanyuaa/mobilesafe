@@ -1,12 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
+    <!--将对应属性抽取到样式中-->
     <TextView
-        android:textSize="20sp"
-        android:text="HomeActivity"
-        android:textColor="#000"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        style="@style/TitleStyle"
+        android:text="功能列表" />
+
+    <!--使用自定义控件达到滚动效果(其实就是重写原有的TextView,让其一直能够获取焦点即可)-->
+    <!--    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:padding="3dp"
+            android:singleLine="true"
+            android:text="夏天夏天悄悄过去留下小秘密
+            压心底 压心底 不能告诉你
+            晚风吹过温暖我心底 我又想起你
+            多甜蜜 多甜蜜 怎能忘记
+            不能忘记你 把你写在日记里
+            不能忘记你 心里想的还是你"
+            android:textColor="#000" />-->
+
+    <com.itheima.mobilesafe.view.FocusTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:padding="3dp"
+        android:singleLine="true"
+        android:text="夏天夏天悄悄过去留下小秘密  压心底 压心底 不能告诉你"
+        android:textColor="#000" />
+
+    <!--verticalSpacing 指定内部条目竖直方向间距-->
+    <GridView
+        android:id="@+id/gv_home"
+        android:numColumns="3"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></GridView>
 </LinearLayout>
