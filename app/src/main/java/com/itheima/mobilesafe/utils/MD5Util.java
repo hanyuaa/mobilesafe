@@ -5,16 +5,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class MD5Util {
 
-    public static void main(String[] args) {
-        encode("hanyu199310001");
-    }
-
     /**
      * 加密
      *
      * @param str
      */
-    private static void encode(String str) {
+    public static String encode(String str) {
         try {
             //指定加密算法类型
             MessageDigest digest = MessageDigest.getInstance("MD5");
@@ -31,9 +27,11 @@ public class MD5Util {
                 buffer.append(hexString);
             }
 
-            System.out.println(buffer);
+            return buffer.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+
+        return "";
     }
 }

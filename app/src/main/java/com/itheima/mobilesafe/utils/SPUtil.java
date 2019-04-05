@@ -48,4 +48,14 @@ public class SPUtil {
         }
         return sp.getString(key, defValue);
     }
+
+    /**
+     * remove
+     */
+    public static void remove(Context context, String key) {
+        if (sp == null) {
+            sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        }
+        sp.edit().remove(key).apply();
+    }
 }

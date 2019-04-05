@@ -30,8 +30,10 @@ public class SettingActivity extends Activity {
             public void onClick(View v) {
                 //如果之前是选中的, 点击后变成未选中
                 //修改成点击CheckBox判断
-                /*boolean check = sivUpdate.isCheck();
-                sivUpdate.setCheck(!check);*/
+                boolean check = sivUpdate.isCheck();
+                sivUpdate.setCheck(!check);
+
+                SPUtil.putBoolean(getApplicationContext(), ConstantValue.UPDATE_CONFIG, !check);
             }
         });
     }

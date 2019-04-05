@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.itheima.mobilesafe.R;
 import com.itheima.mobilesafe.utils.ConstantValue;
+import com.itheima.mobilesafe.utils.MD5Util;
 import com.itheima.mobilesafe.utils.SPUtil;
 import com.itheima.mobilesafe.utils.ToastUtil;
 
@@ -104,7 +105,9 @@ public class HomeActivity extends Activity {
 
         final View view = View.inflate(this, R.layout.set_psd_dialog, null);
         //让对话框显示一个自己定义的对话框界面效果
-        dialog.setView(view);
+        //dialog.setView(view);
+        //兼容2.3版本,边距为0
+        dialog.setView(view,0,0,0,0);
         dialog.show();
 
         Button btSubmit = view.findViewById(R.id.bt_submit);
@@ -120,12 +123,13 @@ public class HomeActivity extends Activity {
 
                 if (!TextUtils.isEmpty(setPsd) && !TextUtils.isEmpty(confirmPsd)) {
                     if (setPsd.equals(confirmPsd)) {
-                        Intent intent = new Intent(getApplicationContext(), TestActivity.class);
+                        //跳转到设置界面
+                        Intent intent = new Intent(getApplicationContext(), SetupOverActivity.class);
                         startActivity(intent);
                         //取消对话框
                         dialog.dismiss();
 
-                        SPUtil.putString(getApplicationContext(), ConstantValue.MOBILE_SAFE_PSD, confirmPsd);
+                        SPUtil.putString(getApplicationContext(), ConstantValue.MOBILE_SAFE_PSD, MD5Util.encode(confirmPsd));
                     } else {
                         ToastUtil.show(getApplicationContext(), "两次密码输入不一致");
                     }
@@ -153,7 +157,8 @@ public class HomeActivity extends Activity {
 
         final View view = View.inflate(this, R.layout.confirm_psd_dialog, null);
         //让对话框显示一个自己定义的对话框界面效果
-        dialog.setView(view);
+        //dialog.setView(view);
+        dialog.setView(view,0,0,0,0);
         dialog.show();
 
         Button btSubmit = view.findViewById(R.id.bt_submit);
@@ -167,8 +172,8 @@ public class HomeActivity extends Activity {
 
                 if (!TextUtils.isEmpty(confirmPsd)) {
                     String mobileSafePsd = SPUtil.getString(getApplicationContext(), ConstantValue.MOBILE_SAFE_PSD, "");
-                    if (mobileSafePsd.equals(confirmPsd)) {
-                        Intent intent = new Intent(getApplicationContext(), TestActivity.class);
+                    if (mobileSafePsd.equals(MD5Util.encode(confirmPsd))) {
+                        Intent intent = new Intent(getApplicationContext(), SetupOverActivity.class);
                         startActivity(intent);
                         //取消对话框
                         dialog.dismiss();

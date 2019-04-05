@@ -41,7 +41,7 @@ public class SettingItemView extends RelativeLayout {
         tvDes = findViewById(R.id.tv_des);
         cbBox = findViewById(R.id.cb_box);
 
-        cbBox.setOnClickListener(new OnClickListener() {
+ /*       cbBox.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean checked = cbBox.isChecked();
@@ -52,10 +52,8 @@ public class SettingItemView extends RelativeLayout {
                     //关闭
                     tvDes.setText(mDesOff);
                 }
-
-                SPUtil.putBoolean(getContext(), ConstantValue.UPDATE_CONFIG, checked);
             }
-        });
+        });*/
 
         //获取自定义以及原生属性的操作,写在此处AttributeSet attrs中获取
         initAttrs(attrs);
