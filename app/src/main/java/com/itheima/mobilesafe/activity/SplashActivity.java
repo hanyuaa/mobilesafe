@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,10 +15,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.animation.AlphaAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.itheima.mobilesafe.R;
 import com.itheima.mobilesafe.utils.ConstantValue;
@@ -31,6 +30,8 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -69,6 +70,61 @@ public class SplashActivity extends Activity {
         initData();
         //初始化动画
         initAnimation();
+        //初始化数据库
+        initDB();
+    }
+
+    private void initDB() {
+        //归属地数据库拷贝过程
+        initAddressDB("address.db");
+    }
+
+    /**
+     * 拷贝数据库值到files文件夹下
+     *
+     * @param dbName 数据库名称
+     */
+    private void initAddressDB(String dbName) {
+        //在files文件夹下创建通明dbName数据库文件过程
+        File files = getFilesDir();
+        File file = new File(files, dbName);
+        if (file.exists()) {
+            return;
+        }
+        //读取第三方资产目录下的文件
+        InputStream is = null;
+        FileOutputStream fos = null;
+        try {
+            //is = getAssets().open(dbName);
+            AssetManager assets = getAssets();
+            is = assets.open(dbName);
+            //将读取的内容写入到指定文件夹的文件中去
+            fos = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int temp = -1;
+            while ((temp = (is.read(buffer))) != -1) {
+                fos.write(buffer, 0, temp);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**

@@ -3,10 +3,12 @@ package com.itheima.mobilesafe.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.media.MediaPlayer;
 import android.telephony.SmsMessage;
 
 import com.itheima.mobilesafe.R;
+import com.itheima.mobilesafe.service.LocationService;
 import com.itheima.mobilesafe.utils.ConstantValue;
 import com.itheima.mobilesafe.utils.SPUtil;
 
@@ -38,6 +40,12 @@ public class SmsReceiver extends BroadcastReceiver {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                    }
+
+                    //判断是否包含了位置的关键字
+                    if (body.contains("#*location*#")) {
+                        Intent intent1 = new Intent(context, LocationService.class);
+                        context.startService(intent1);
                     }
                 }
             }

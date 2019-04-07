@@ -30,4 +30,18 @@ public class ConstantValue {
      * 开启防盗保护
      */
     public static final String OPEN_SECURITY = "open_security";
+    /**
+     * Toast样式
+     */
+    public static final String TOAST_STYLE = "toast_style";
+
+    /**
+     * 左上角x轴
+     */
+    public static final String LOCATION_X = "location_x";
+
+    /**
+     * 左上角y轴
+     */
+    public static final String LOCATION_Y = "location_y";
 }

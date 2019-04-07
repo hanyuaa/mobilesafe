@@ -58,4 +58,26 @@ public class SPUtil {
         }
         sp.edit().remove(key).apply();
     }
+
+
+    /**
+     * 写 int
+     */
+    public static void putInt(Context context, String key, int value) {
+        //存储节点文件的名称
+        if (sp == null) {
+            sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        }
+        sp.edit().putInt(key, value).apply();
+    }
+
+    /**
+     * 读 int
+     */
+    public static int getInt(Context context, String key, int defValue) {
+        if (sp == null) {
+            sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        }
+        return sp.getInt(key, defValue);
+    }
 }
