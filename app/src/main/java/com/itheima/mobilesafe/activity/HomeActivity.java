@@ -60,11 +60,14 @@ public class HomeActivity extends Activity {
                     case 0: //手机防盗
                         showDialog();
                         break;
-                    case 1:
+                    case 1:  //通讯卫士
+                        startActivity(new Intent(getApplicationContext(),BlackNumberActivity.class));
                         break;
-                    case 2:
+                    case 2:  //应用管理
+                        startActivity(new Intent(getApplicationContext(),AppManagerActivity.class));
                         break;
-                    case 3:
+                    case 3:  //进程管理
+                        startActivity(new Intent(getApplicationContext(),ProcessManagerActivity.class));
                         break;
                     case 4:
                         break;

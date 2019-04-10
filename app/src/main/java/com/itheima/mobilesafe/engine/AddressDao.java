@@ -12,7 +12,10 @@ public class AddressDao {
 
     //开启数据库连接, 进行访问
     public static String getAddress(String phone) {
-        phone = phone.substring(0, 7);
+
+        if (phone.length() >= 7) {
+            phone = phone.substring(0, 7);
+        }
         //开启数据库连接
         SQLiteDatabase database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
         //数据库查询

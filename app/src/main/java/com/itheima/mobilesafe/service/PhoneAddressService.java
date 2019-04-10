@@ -1,8 +1,10 @@
 package com.itheima.mobilesafe.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
@@ -12,6 +14,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -34,6 +37,9 @@ public class PhoneAddressService extends Service {
     private String address;
     private TextView tv;
     private int[] drawableIds;
+    private int screenHeight;
+    private int screenWidth;
+    private InnerOutGoingCallReceiver outGoingCallReceiver;
 
     @Nullable
     @Override
@@ -52,6 +58,25 @@ public class PhoneAddressService extends Service {
 
         //获取窗体对象
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        screenHeight = mWindowManager.getDefaultDisplay().getHeight();
+        screenWidth = mWindowManager.getDefaultDisplay().getWidth();
+
+        //去电归属地查询
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
+
+        outGoingCallReceiver = new InnerOutGoingCallReceiver();
+        registerReceiver(outGoingCallReceiver,filter);
+    }
+
+    class InnerOutGoingCallReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //获取播出电话号码的字符串
+            String phone = getResultData();
+            showToast(phone);
+        }
     }
 
     @Override
@@ -60,6 +85,10 @@ public class PhoneAddressService extends Service {
         //取消服务,取消监听状态
         if (myPhoneStateListener != null) {
             mTM.listen(myPhoneStateListener, PhoneStateListener.LISTEN_NONE); //不再监听
+        }
+
+        if (outGoingCallReceiver != null) {
+            unregisterReceiver(outGoingCallReceiver);
         }
     }
 
@@ -108,11 +137,76 @@ public class PhoneAddressService extends Service {
         mViewToast = inflate.inflate(R.layout.toast_view, null);
         tv = mViewToast.findViewById(R.id.tv_toast);
 
+        mViewToast.setOnTouchListener(new View.OnTouchListener() {
+            private int starY;
+            private int starX;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        //int starX = (int) event.getX();
+                        starX = (int) event.getRawX();
+                        starY = (int) event.getRawY();
+
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int moveX = (int) event.getRawX();
+                        int moveY = (int) event.getRawY();
+
+                        int disX = moveX - starX;
+                        int disY = moveY - starY;
+
+                        params.x = starX + disX;
+                        params.y = starY + disY;
+                        //告知窗体吐司需要按照手势的移动去做位置的更新
+                        mWindowManager.updateViewLayout(mViewToast, params);
+                        //容错处理(ivDrag不能拖拽出手机屏幕)
+                        //左边缘不能超出屏幕
+                        if (params.x < 0) {
+                            params.x = 0;
+                        }
+                        //有边缘不能超出屏幕
+                        if (params.y < 0) {
+                            params.y = 0;
+                        }
+                        //上边缘不能超出屏幕
+                        if (params.x > screenWidth - mViewToast.getWidth()) {
+                            params.x = screenWidth - mViewToast.getWidth();
+                        }
+
+                        //下边缘(屏幕的高度-22 = 低边缘显示最大值)
+                        if (params.y > screenHeight - mViewToast.getHeight() - 22) {
+                            params.y = screenHeight - mViewToast.getHeight() - 22;
+                        }
+
+                        //重置一次起始坐标
+                        starX = (int) event.getRawX();
+                        starY = (int) event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        //存储移动到的位置
+                        SPUtil.putInt(getApplicationContext(), ConstantValue.LOCATION_X, params.x);
+                        SPUtil.putInt(getApplicationContext(), ConstantValue.LOCATION_Y, params.y);
+                        break;
+                }
+                //在当前的情况下返回false不响应移动事件
+                //既要响应点击事件,又要响应拖拽事件, 此返回值结果需要返回为false
+                return true;
+            }
+        });
+
+
+        //读入sp中存储吐司位置的坐标值
+        params.x = SPUtil.getInt(getApplicationContext(), ConstantValue.LOCATION_X, 0);
+        params.y = SPUtil.getInt(getApplicationContext(), ConstantValue.LOCATION_Y, 0);
+
         //从sp中获取色值文字的索引,匹配图片
         drawableIds = new int[]{R.drawable.call_locate_white,
                 R.drawable.call_locate_orange,
                 R.drawable.call_locate_blue,
-                R.drawable.call_locate_gray, R.drawable.call_locate_green};
+                R.drawable.call_locate_gray,
+                R.drawable.call_locate_green};
         int idx = SPUtil.getInt(this, ConstantValue.TOAST_STYLE, 0);
         tv.setBackgroundResource(drawableIds[idx]);
 

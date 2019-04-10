@@ -1,6 +1,5 @@
 package com.itheima.mobilesafe.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -158,6 +157,10 @@ public class ToastLocationActivity extends Activity {
                     int bottom = screenHeight / 2 + ivDrag.getHeight() / 2;
 
                     ivDrag.layout(left, top, right, bottom);
+
+                    SPUtil.putInt(getApplicationContext(), ConstantValue.LOCATION_X, ivDrag.getLeft());
+                    SPUtil.putInt(getApplicationContext(), ConstantValue.LOCATION_Y, ivDrag.getTop());
+
                 }
             }
         });

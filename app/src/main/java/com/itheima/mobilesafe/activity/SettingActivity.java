@@ -32,6 +32,35 @@ public class SettingActivity extends Activity {
         initPhoneAddress();
         initToastStyle();
         initLocation();
+        initBlacknumber();
+    }
+
+    /**
+     * 拦截黑名单
+     */
+    private void initBlacknumber() {
+        final SettingItemView sivBlacknumber = findViewById(R.id.siv_blacknumber);
+
+        boolean isRunning = ServiceUtil.isRunning(this, BlackNumberService.class.getName());
+
+        sivBlacknumber.setCheck(isRunning);
+        sivBlacknumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //如果之前是选中的, 点击后变成未选中
+                //修改成点击CheckBox判断
+                boolean check = sivBlacknumber.isCheck();
+                sivBlacknumber.setCheck(!check);
+
+                if (!check) {
+                    //开启服务
+                    startService(new Intent(getApplicationContext(), BlackNumberService.class));
+                } else {
+                    //关闭服务
+                    stopService(new Intent(getApplicationContext(), BlackNumberService.class));
+                }
+            }
+        });
     }
 
     /**
@@ -45,7 +74,7 @@ public class SettingActivity extends Activity {
         scvLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),ToastLocationActivity.class));
+                startActivity(new Intent(getApplicationContext(), ToastLocationActivity.class));
             }
         });
     }
